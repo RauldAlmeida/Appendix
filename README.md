@@ -4,7 +4,7 @@ Appendix of Dissemination entitled "Development of an Automatic System for Behav
 ## A - Arduino Code
 [Open the following Paste](./arduino_code.ino/) to check the Arduino code used for motor and load cells control.
 ## B - Python Code
-[Open the following Paste](./python_code.pys/) to check the python interface designed using tkinter package. The interface communicate with Arduino and stires values of the motors and sensors embedded in the mechatronics system.
+[Open the following Paste](./python_code.py/) to check the python interface designed using tkinter package. The interface communicate with Arduino and stires values of the motors and sensors embedded in the mechatronics system.
 
 
 ## C - AutoCAD Draw Files
