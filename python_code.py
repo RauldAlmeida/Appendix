@@ -156,7 +156,7 @@ class StepperControlPage:
         
         self.auto_text = tk.Text(self.auto_sub_frame, height=10, width=40, wrap=tk.WORD)
         self.auto_text.grid(row=8, column=0, padx=10, pady=10)
-        self.auto_text.insert("1.0", "MA 23,3 ML -12,4\nMA -12,2 ML 10\nMA -12,3 ML 14")
+        self.auto_text.insert("1.0", "MA +23,3 ML -12,4\nMA -12,2 ML +10\nMA -12,3 ML +14")
 
         start_auto_button = tk.Button(self.auto_sub_frame, text="INICIAR", command=self.start_auto_control)
         start_auto_button.grid(row=9, column=1, padx=10, pady=10)
