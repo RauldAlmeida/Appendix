@@ -18,11 +18,6 @@ const int DirY = 6;
 #include <AccelStepper.h>
 #include <HX711.h>
 //
-// Stepper motor pins
-#define MOTOR1_STEP_PIN 2
-#define MOTOR1_DIR_PIN 5
-#define MOTOR2_STEP_PIN 3
-#define MOTOR2_DIR_PIN 6
 
 //// Load cell pins
 //#define LOAD_CELL1_DOUT_PIN 4
@@ -35,8 +30,6 @@ const int DirY = 6;
 //const float LOAD_CELL2_CALIBRATION_FACTOR = 1.0;
 
 // Initializing the AccelStepper and HX711 Objects
-AccelStepper motor1(AccelStepper::DRIVER, MOTOR1_STEP_PIN, MOTOR1_DIR_PIN);
-AccelStepper motor2(AccelStepper::DRIVER, MOTOR2_STEP_PIN, MOTOR2_DIR_PIN);
 //HX711 loadCell1;
 //HX711 loadCell2;
 
@@ -79,14 +72,12 @@ void setup() {
 }
 
 void moveX(float distanceMM) {
-  float steps = distanceMM* stepsPerUnit; // Calculate the number of steps based on degrees
-  if (steps > 0) {
-    digitalWrite(DirX, HIGH); // set direction, HIGH for clockwise, LOW for anticlockwise
+  float steps = 55*abs(tan(distanceMM))*stepsPerUnit;
+  if (distanceMM > 0) {
+    digitalWrite(DirX, LOW); // set direction, HIGH for clockwise, LOW for anticlockwise
   } else {
-    digitalWrite(DirX, LOW);
-    steps = -steps;
+    digitalWrite(DirX, HIGH);
   }
-
   for (int i = 0; i < steps; i++) {
     digitalWrite(StepX, HIGH);
     delayMicroseconds(200);
@@ -97,11 +88,10 @@ void moveX(float distanceMM) {
 
 void moveY(float distanceMY) {
   float steps = distanceMY * stepsPerUnit; // Calculate the number of steps based on distance
-  if (steps > 0) {
+  if (distanceMY > 0) {
     digitalWrite(DirY, HIGH); // set direction, HIGH for clockwise, LOW for anticlockwise
   } else {
     digitalWrite(DirY, LOW);
-    steps = -steps;
   }
 
   for (int i = 0; i < steps; i++) {
@@ -129,20 +119,16 @@ void loop() {
       int maIndex = command.indexOf("MA ");
       int mlIndex = command.indexOf("ML ");
       if (maIndex != -1 && mlIndex != -1) {
-          String maValues = command.substring(maIndex + 3, mlIndex);
-          String mlValues = command.substring(mlIndex + 3);
+          String maValues = command.substring(maIndex + 4, mlIndex);
+          String mlValues = command.substring(mlIndex + 4);
       
           float maValue = maValues.toFloat();
           float mlValue = mlValues.toFloat();
-          
           // Converts the number of steps in mm to the desired position in steps
-          float targetPositionMA = 55*tan(maValue); //Desired Angle Conversion for XX Linear Table Offset
-          moveX(targetPositionMA); // Move mm converted to angle torsion in z-axis
+          moveX(maValue); // Move mm converted to angle torsion in z-axis
           delay(1000); // Delay od 1 second
 
-          
-          float targetPositionML = mlValue;
-          moveY(targetPositionML); // Move mm in x-axis 
+          moveY(mlValue); // Move mm in x-axis 
           delay(1000); // Delay de 1 segundo
 //          motor2.moveTo(targetPositionML);
 //          motor2.run();
@@ -194,7 +180,7 @@ void loop() {
     }
     else if (command.startsWith("MOTOR_ANGULAR:")) {
           // Processing Angle Motor Control in Manual Mode
-          String angular_value_str = command.substring(15);
+          String angular_value_str = command.substring(14,15);
           float angular_value = angular_value_str.toFloat();
 
           // Converts the number of steps in mm to the desired position in steps
@@ -202,8 +188,7 @@ void loop() {
 //          motor1.moveTo(targetPosition);
 //          motor1.run();
 
-          float StepX = 55*tan(angular_value); //Desired Angle Conversion for XX Linear Table Offset
-          moveX(StepX); // Move mm in x-axis
+          moveX(angular_value); // Move mm in x-axis
           delay(1000); // Delay of 1 second
 
           // Wait until Tmeas milliseconds have passed
@@ -241,15 +226,15 @@ void loop() {
     }
     else if (command.startsWith("MOTOR_LINEAR:")) {
           // Processing Linear Motor Control in Manual Mode
-          String linear_value_str = command.substring(14);
+          String linear_value_str = command.substring(13,16);
           float linear_value = linear_value_str.toFloat();
 
 //          float targetPosition = linear_value * stepsPerUnit;
 //          motor2.moveTo(targetPosition);
 //          motor2.run();
 
-          float StepY = linear_value;
-          moveY(StepY); // Move mm no Y-axis
+        
+          moveY(linear_value); // Move mm no Y-axis
           delay(1000); // Delay of 1 second
           
           // Wait until Tmeas milliseconds have passed
